@@ -7,13 +7,13 @@ const logInWithEmail = (email, password ) => {
         
         firebase.auth().signInWithEmailAndPassword(email, password)
             .then(()=> {
-                console.log('Функция: срабоотала')
+                console.log('Функция входа: срабоотала')
                 dispatch(setLoggedInState(true))
                 return true
             })
             .catch((error)=>{
                 console.log(error)
-                console.log('Функция: не срабоотала')
+                console.log('Функция входа: не срабоотала')
                 dispatch(setLoggedInState(false));
                 return false
             });

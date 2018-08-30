@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 
 import { createStackNavigator } from 'react-navigation';
 
-import CountryList  from '../components/CountryList/CountryList';
-import JournalList from '../components/CountryList/JournalList/JournalList';
-import NewsList     from '../components/CountryList/JournalList/NewsList/NewsList';
+import CountryList  from '../components/lists/countryList/CountryList';
+import JournalList  from '../components/lists/journalList/JournalList';
+import NewsList     from '../components/lists/newsList/NewsList';
 
 
 const Navigation = createStackNavigator(

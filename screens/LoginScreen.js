@@ -49,7 +49,13 @@ class LoginScreen extends Component {
         const { navigation } = this.props;
         const { navigate } = navigation;
         
-        nextProps.loggedInStatus.loggedInState ? navigate('Main') : null
+        nextProps.loggedInStatus.loggedInState !== this.props.loggedInStatus.loggedInState ? 
+            navigate('Main') : 
+            null
+            
+        nextProps.notSignUpStatus.notSignUpStatus !== this.props.notSignUpStatus.notSignUpStatus ? 
+            navigate('Main') : 
+            null
     }
     
        
@@ -71,12 +77,14 @@ class LoginScreen extends Component {
     }
 
     validatePassword = (value) => {
-        if (value.lenght < 6) {
-            this.setState({error:'That is not a valid password.', showError: true})
-            return false
+        const passwordCheckRegex = /(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{6,}/g;
+        
+        if (value.length >= 6) {
+            this.setState({error: '', showError: false})
+            return true 
         }
-        this.setState({error: '', showError: false})
-        return true 
+        this.setState({error:'That is not a valid password.', showError: true})
+        return false
     }
 
     onChangeInput = (value, fieldName) => {
@@ -91,7 +99,7 @@ class LoginScreen extends Component {
         const {email, password} = this.state;
         const { logInWithEmail } = this.props;
 
-        this.validateEmail(email) && validatePassword(password)  ? logInWithEmail(email, password) : null
+        (this.validateEmail(email) && this.validatePassword(password))  ? logInWithEmail(email, password) : null
 
     }
 
@@ -99,23 +107,24 @@ class LoginScreen extends Component {
         this.setState({ error: ''})
 
         const { email, password } = this.state
-        const { navigation } = this.props
-        const { navigate } = navigation
+        const { signUp } = this.props
         
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-            .then(() => {
-                var user = firebase.auth().currentUser;
+        (this.validateEmail(email) && this.validatePassword(password)) ? signUp(email, password) : null    
 
-                user.sendEmailVerification().then(() => {
-                    this.setState({ error: '' });
-                    navigate('Main')
-                }).catch(function(error) {
-                    this.setState({ error: `${error}`, showError: true })
-                });
-            })
-            .catch((error) => {
-                this.setState({ error: `${error}`, showError: true })
-            });
+        // firebase.auth().createUserWithEmailAndPassword(email, password)
+        //     .then(() => {
+        //         var user = firebase.auth().currentUser;
+
+        //         user.sendEmailVerification().then(() => {
+        //             this.setState({ error: '' });
+        //             navigate('Main')
+        //         }).catch(function(error) {
+        //             this.setState({ error: `${error}`, showError: true })
+        //         });
+        //     })
+        //     .catch((error) => {
+        //         this.setState({ error: `${error}`, showError: true })
+        //     });
     }
 
     render(){
@@ -203,7 +212,8 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
     return {
-        loggedInStatus: state.loggedInStatus
+        loggedInStatus: state.loggedInStatus,
+        notSignUpStatus: state.notSignUpStatus
     }
 }
 

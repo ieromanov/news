@@ -10,35 +10,33 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import * as countrys from '../../assets/data/iso-3166.json';
-import apiKey from '../../api/apiKey.json';
+import apiKey from '../../../api/apiKey.json';
 
-export default class CountryList extends Component {
-    static navigationOptions = {
-        header: null
+import HeaderBack from '../../headers/HeaderBack';
+
+export default class JournalList extends Component {
+    static navigationOptions = ({ navigation }) => ({
+        header: <HeaderBack 
+                    title={navigation.state.params.name}
+                    navigation={navigation}
+                />
+    });
+
+    state = {
+        wallsJSON: {},
+        loading: true,
     }
 
-    constructor(props) {
-        super();
-
-        this.state = {
-            wallsJSON: {},
-            loading: true,
-            countryArr: [],
-        }
-    }
-    
     componentDidMount = () => {
         this.fetchWallsJSON();
     }
 
-    componentWillMount = () => {
-        this.state.loading = true;
-    }
-
     fetchWallsJSON = () => {
+
+        const { navigation } = this.props;
+
         this.setState({ loading: true });
-        const url = `https://newsapi.org/v2/sources?apiKey=${apiKey['api']}`;
+        const url = `https://newsapi.org/v2/sources?country=${navigation.state.params.country}&apiKey=${apiKey['api']}`;
         fetch(url)
             .then(response => response.json())
             .then(jsonData => {
@@ -65,41 +63,36 @@ export default class CountryList extends Component {
         );
     }
 
+
     renderResults = () => {
         const { navigate } = this.props.navigation;
-        this.state.countryArr = [];
+        this.state.languageArr = [];
         return (
             <ScrollView 
-                        style={styles.mainContainer}
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={this.state.loading}
-                                onRefresh={this.fetchWallsJSON}
-                            />
-                        }
+                refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.loading}
+                        onRefresh={this.fetchWallsJSON}
+                    />
+                }
             >
                 {
                     this.state.wallsJSON.map((dataSourceNews, index) => {
-                        if (this.state.countryArr.indexOf(dataSourceNews.country) != -1) {
-                            return;
-                        } else {
-                            this.state.countryArr.push(dataSourceNews.country);
                             return (
                                 <TouchableHighlight
                                     key={index}
                                     style={styles.touchableComponent}
-                                    onPress={() =>{
-                                        navigate('JournalList',
+                                    onPress={() =>
+                                        navigate('NewsList',
                                                 {   
-                                                    name: `Journals in ${countrys[dataSourceNews.country]}`, 
-                                                    country: dataSourceNews.country,
-                                                });
-                                    }
-                                        
+                                                    name: dataSourceNews.name, 
+                                                    country: dataSourceNews.country, 
+                                                    sources: dataSourceNews.id,
+                                                })
                                     }>
                                     <View style={styles.sourceContainer}>
                                         <Text style={styles.sourceName}>
-                                            {countrys[dataSourceNews.country]}
+                                            {dataSourceNews.name}
                                         </Text>
                                         <Ionicons
                                             name='ios-arrow-forward'
@@ -109,8 +102,6 @@ export default class CountryList extends Component {
                                     </View>
                                 </TouchableHighlight>
                             );
-                        }
-                        
                     })
                 }
             </ScrollView>
