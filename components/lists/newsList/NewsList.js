@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import {
+    View,
     TouchableHighlight,
     StyleSheet,
 } from 'react-native';
-import { View, ListView, Subtitle, Image, Title, Caption} from '@shoutem/ui'
+import { ListView, Divider, Title, Image, Text, Caption} from '@shoutem/ui'
 import { WebBrowser } from 'expo';
 
 
@@ -76,19 +77,20 @@ export default class NewsList extends Component {
     renderRow = news => {
         return (
             <TouchableHighlight onPress={()=>this.handleLearnMore(news.url)}>
-                <View style={styles.newsWrapper}>
+                <View>
                     <Image
                         styleName="large-banner"
                         source={news.urlToImage ? this.getUrlImage(news.urlToImage) : require('../../../assets/images/stub.png')}
                     />
-                    <View>
-                        <View style={styles.newsMeta} styleName="horizontal v-center space-between">
+                    <View style={styles.contentWrapper}>
+                        <View style={styles.newsMeta}>
                             <Caption>{news.source.name}</Caption>
                             <Caption>{this.parcingDate(news.publishedAt)}</Caption>
                         </View>
                         <Title>{news.title}</Title>
-                        <Subtitle>{news.description}</Subtitle>
+                        <Text numberOfLines={3}>{news.description}</Text>
                     </View>
+                    <Divider styleName="line" />
                 </View>
           </TouchableHighlight>
         );
@@ -107,5 +109,16 @@ export default class NewsList extends Component {
 }
 
 const styles = StyleSheet.create({
-
+    contentWrapper: {
+        padding: 15,
+        backgroundColor: colors.white
+    },
+    newsMeta: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 10
+    },
+    newsTitle: {
+        marginVertical: 10
+    }
 });
