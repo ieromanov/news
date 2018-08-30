@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import {
     View,
     KeyboardAvoidingView,
-    Text,
-    ActivityIndicator,
     StyleSheet
 } from 'react-native';
 
@@ -52,8 +50,8 @@ class LoginScreen extends Component {
         nextProps.loggedInStatus.loggedInState !== this.props.loggedInStatus.loggedInState ? 
             navigate('Main') : 
             null
-            
-        nextProps.notSignUpStatus.notSignUpStatus !== this.props.notSignUpStatus.notSignUpStatus ? 
+
+        nextProps.signUpStatus.signUpStatus !== this.props.signUpStatus.signUpStatus ? 
             navigate('Main') : 
             null
     }
@@ -109,7 +107,7 @@ class LoginScreen extends Component {
         const { email, password } = this.state
         const { signUp } = this.props
         
-        (this.validateEmail(email) && this.validatePassword(password)) ? signUp(email, password) : null    
+        this.validateEmail(email) && this.validatePassword(password) ? signUp(email, password) : null    
 
         // firebase.auth().createUserWithEmailAndPassword(email, password)
         //     .then(() => {
@@ -213,7 +211,7 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
     return {
         loggedInStatus: state.loggedInStatus,
-        notSignUpStatus: state.notSignUpStatus
+        signUpStatus: state.signUpStatus
     }
 }
 

@@ -8,26 +8,26 @@ const signUp = (email, password ) => {
         firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(()=> {
                 console.log('Функция регистрации: срабоотала')
-                dispatch(setNotSignUpState(true))
+                dispatch(setSignUpState(true))
                 return true
             })
             .catch((error)=>{
                 console.log(error)
                 console.log('Функция регистрации: не срабоотала')
-                dispatch(setNotSignUpState(false));
+                dispatch(setSignUpState(false));
                 return false
             });
     }
 } 
 
-const setNotSignUpState = SignUpState => (
+const setSignUpState = signUpState => (
     {
-      type: types.SET_NOT_SIGN_UP_STATE,
-      SignUpState,
+      type: types.SET_SIGN_UP_STATE,
+      signUpState,
     }
 );
 
 export {
     signUp,
-    setNotSignUpState
+    setSignUpState
 }
