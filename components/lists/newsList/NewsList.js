@@ -84,7 +84,7 @@ export default class NewsList extends Component {
                     />
                     <View style={styles.contentWrapper}>
                         <View style={styles.newsMeta}>
-                            <Caption>{news.source.name}</Caption>
+                            <Caption>{news.author ? news.author : news.source.name}</Caption>
                             <Caption>{this.parcingDate(news.publishedAt)}</Caption>
                         </View>
                         <Title>{news.title}</Title>
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
     newsMeta: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        flexWrap: 'wrap',
         marginBottom: 10
     },
     newsTitle: {

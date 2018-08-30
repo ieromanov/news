@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import {
     View,
-    ScrollView,
-    Text,
     TouchableHighlight,
     ActivityIndicator,
-    RefreshControl,
     StyleSheet,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Row, Divider, Title, Icon, ListView } from '@shoutem/ui'
 
 import apiKey from '../../../api/apiKey.json';
 
@@ -64,52 +61,41 @@ export default class JournalList extends Component {
     }
 
 
-    renderResults = () => {
+    renderRow = journal => {
         const { navigate } = this.props.navigation;
-        this.state.languageArr = [];
         return (
-            <ScrollView 
-                refreshControl={
-                    <RefreshControl
-                        refreshing={this.state.loading}
-                        onRefresh={this.fetchWallsJSON}
-                    />
-                }
-            >
-                {
-                    this.state.wallsJSON.map((dataSourceNews, index) => {
-                            return (
-                                <TouchableHighlight
-                                    key={index}
-                                    style={styles.touchableComponent}
-                                    onPress={() =>
-                                        navigate('NewsList',
-                                                {   
-                                                    name: dataSourceNews.name, 
-                                                    country: dataSourceNews.country, 
-                                                    sources: dataSourceNews.id,
-                                                })
-                                    }>
-                                    <View style={styles.sourceContainer}>
-                                        <Text style={styles.sourceName}>
-                                            {dataSourceNews.name}
-                                        </Text>
-                                        <Ionicons
-                                            name='ios-arrow-forward'
-                                            size={24}
-                                            style={styles.sourceArrow}
-                                        />
-                                    </View>
-                                </TouchableHighlight>
-                            );
-                    })
-                }
-            </ScrollView>
+            <View>
+                <TouchableHighlight 
+                    onPress={() =>
+                        navigate('NewsList',
+                            {   
+                                name: journal.name, 
+                                country: journal.country, 
+                                sources: journal.id,
+                            })
+                    }
+                >
+                    <Row styleName="small">
+                        <Title>
+                            {journal.name}
+                        </Title>
+                        <Icon name="right-arrow" />
+                    </Row>
+                </TouchableHighlight>
+                <Divider styleName="line" />
+            </View>
         );
     }
 
     render() {
-        return (this.state.loading ? this.renderLoadingSpinner() : this.renderResults());
+        const { wallsJSON, loading } = this.state;
+        return (
+            <ListView 
+                data={wallsJSON}
+                renderRow={this.renderRow}
+                loading={loading}
+            />
+        );
     }
 }
 
