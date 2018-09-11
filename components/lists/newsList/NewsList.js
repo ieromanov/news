@@ -3,15 +3,15 @@ import {
     View,
     TouchableHighlight,
     StyleSheet,
-} from 'react-native';
+} from 'react-native'
 import { ListView, Divider, Title, Image, Text, Caption} from '@shoutem/ui'
-import { WebBrowser } from 'expo';
+import { WebBrowser } from 'expo'
 
 
-import apiKey from '../../../api/apiKey.json';
+import apiKey from '../../../api/apiKey.json'
 import colors from '../../../constants/Colors'
 
-import HeaderBack from '../../headers/HeaderBack';
+import HeaderBack from '../../headers/HeaderBack'
 
 export default class NewsList extends Component {
     static navigationOptions = ({ navigation }) => ({
@@ -22,8 +22,9 @@ export default class NewsList extends Component {
     });
 
     state = {
-        wallsJSON: {},
+        wallsJSON: [],
         loading: true,
+        date: new Date().setDate(new Date().getDate()),
     }
 
     componentDidMount = () => {
@@ -31,39 +32,63 @@ export default class NewsList extends Component {
     }
 
     fetchWallsJSON = () => {
-        
         const { navigation } = this.props;
-
+        const { date, wallsJSON } = this.state;
         this.setState({ loading: true });
-        const url = `https://newsapi.org/v2/top-headlines?sources=${navigation.state.params.sources}&pageSize=20&apiKey=${apiKey['api']}`;
+        console.log("fetch date: ", date)
+        const url = `https://newsapi.org/v2/everything?sources=${navigation.state.params.sources}&to=${this.formatDate(date)}&pageSize=10&apiKey=${apiKey['api']}`;
+        this.decrementDate()
         fetch(url)
             .then(response => response.json())
             .then(jsonData => {
-
-                this.state.wallsJSON = {};
-                this.state.wallsJSON = jsonData.articles;
-
-                this.setState({
-                    loading: false,
-                    wallsJSON: this.state.wallsJSON
-                });
+                if (wallsJSON.length === 0) {
+                    this.setState({
+                        loading: false,
+                        wallsJSON: jsonData.articles
+                    })
+                } else {
+                    this.setState({
+                        loading: false,
+                        wallsJSON: wallsJSON.concat(jsonData.articles)
+                    })
+                } 
             })
             .catch(error => console.log('JSON Fetch error : ' + error));
+    }
+    
+    formatDate = (date) => {
+        let newDate = new Date(date)
+
+        let dd = newDate.getDate();
+        dd < 10 ? dd = '0' + dd : dd
+        
+        let mm = newDate.getMonth() + 1;
+        mm < 10 ? mm = '0' + mm : mm
+        
+        let yy = newDate.getFullYear();
+        
+        return `${yy}-${mm}-${dd}`;
     }
 
     parcingDate = (date) => {
         if (typeof (date) == 'string') {
-            let result,
-                day,
-                mounth,
-                year
+            let year = date.substr(0, 4)
+            let mounth = date.substr(5, 2)
+            let day = date.substr(8, 2)
 
-            year = date.substr(0, 4)
-            mounth = date.substr(5, 2)
-            day = date.substr(8, 2)
-
-            return result = `${day}.${mounth}.${year}`;
+            return `${day}.${mounth}.${year}`;
         }
+    }
+
+    decrementDate = () => {
+        const { date } = this.state
+        const dDate = new Date(date).setDate(new Date(date).getDate() - 1)
+        this.setState({ date: dDate })
+    }
+
+    loadMoreNews = () => {
+        console.log("decrementDate: ", this.decrementDate())
+        this.fetchWallsJSON()
     }
 
     getUrlImage = (urlImage) => {
@@ -98,11 +123,13 @@ export default class NewsList extends Component {
 
     render() {
         const { wallsJSON, loading } = this.state
+    
         return (
             <ListView
                 data={wallsJSON}
                 renderRow={this.renderRow}
                 loading={loading}
+                onLoadMore={this.loadMoreNews}
             />
         );
     }

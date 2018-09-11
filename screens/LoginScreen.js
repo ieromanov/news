@@ -36,12 +36,24 @@ class LoginScreen extends Component {
             error: '',
             showError: false
         };
+        
     }
 
     static navigationOptions = {
         header: null
     };
 
+    componentDidMount() {
+        const { navigation } = this.props;
+        const { navigate } = navigation;
+        
+        
+        firebase.auth().onAuthStateChanged(user => {
+            user ?
+                navigate('Main'):
+                null 
+        })
+    }
 
     componentWillReceiveProps (nextProps) {
         const { navigation } = this.props;
@@ -56,7 +68,6 @@ class LoginScreen extends Component {
             null
     }
     
-       
     closeNotification = () => {
         this.setState({
             showError: false
@@ -147,7 +158,7 @@ class LoginScreen extends Component {
                         labelText="Email"
                         labelTextSize={20}
                         inputTextSize={18}
-                        textColor={colors.white} 
+                        textColor={colors.black} 
                         borderColor={colors.white}
                         inputType='email'
                         onChange={this.onChangeInput}
@@ -156,9 +167,7 @@ class LoginScreen extends Component {
                     <InputField 
                         labelText="Password"
                         labelTextSize={20}
-                        inputTextSize={16}
-                        textColor={colors.white} 
-                        borderColor={colors.white}
+                        textColor={colors.black} 
                         inputType='password'
                         onChange={this.onChangeInput}
                         customStyle={{marginTop: 20}}
@@ -166,8 +175,8 @@ class LoginScreen extends Component {
                     <View style={styles.buttonWrapper}>
                         <DefaultButton
                             buttonText='Log In'
-                            buttonColor={colors.white}
-                            buttonTextColor={colors.black}
+                            buttonColor={colors.black}
+                            buttonTextColor={colors.white}
                             handlerButton={this.onLoginPress}
                         />
                         <DefaultButton
@@ -195,7 +204,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flex: 1,
         justifyContent: 'center',
-        backgroundColor: colors.black,
+        backgroundColor: colors.grey,
     },
     contentWrapper: {
         flex: 1,

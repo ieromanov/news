@@ -20,7 +20,7 @@ export default class JournalList extends Component {
     });
 
     state = {
-        wallsJSON: {},
+        wallsJSON: [],
         loading: true,
     }
 
@@ -37,13 +37,9 @@ export default class JournalList extends Component {
         fetch(url)
             .then(response => response.json())
             .then(jsonData => {
-
-                this.state.wallsJSON = {};
-                this.state.wallsJSON = jsonData.sources;
-
                 this.setState({
                     loading: false,
-                    wallsJSON: this.state.wallsJSON
+                    wallsJSON: jsonData.sources
                 });
             })
             .catch(error => console.log('JSON Fetch error : ' + error));

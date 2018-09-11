@@ -3,10 +3,11 @@ import { PropTypes } from 'prop-types'
 import { Ionicons } from '@expo/vector-icons';
 import {
     View,
-    Text,
-    TextInput,
+    Text,   
     StyleSheet
 } from 'react-native';
+
+import { TextInput } from '@shoutem/ui'
 
 import colors from '../../constants/Colors'
 
@@ -29,17 +30,15 @@ export default class InputField extends Component {
     }
 
     render(){
-        const { labelText, labelTextSize, inputTextSize, textColor, borderColor, inputType, customStyle } = this.props
+        const { labelText, labelTextSize,  textColor,  inputType, customStyle } = this.props
         const { showPassword } = this.state
         const labelFontSize = labelTextSize || 18;
-        const inputFontSize = inputTextSize || 20;
         const color = textColor || colors.white;
-        const borderBottomColor = borderColor || 'transparent';
         return (
             <View style={[customStyle, styles.wrapper]}>
                 <Text style={[{color, fontSize: labelFontSize}, styles.label]}>{labelText}</Text>
                 {
-                    this.props.inputType === 'password' ? 
+                    inputType === 'password' ? 
                         <Ionicons 
                             name={showPassword ? 'ios-eye-outline' : 'ios-eye-off-outline'} 
                             size={labelFontSize} 
@@ -53,8 +52,7 @@ export default class InputField extends Component {
                     autoCorrect={false}
                     underlineColorAndroid="transparent"
                     placeholder={labelText}
-                    onChangeText={this.handlerChange}
-                    style={[{color, borderBottomColor, fontSize: inputFontSize }, styles.inputField]} 
+                    onChangeText={this.handlerChange} 
                     secureTextEntry={showPassword}
                 />
             </View>
@@ -65,9 +63,7 @@ export default class InputField extends Component {
 InputField.protoTypes = {
     labelText: PropTypes.string.isRequired,
     labelTextSize: PropTypes.number,
-    inputTextSize: PropTypes.number,
     textColor: PropTypes.string,
-    borderColor: PropTypes.string,
     inputType: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     customStyle: PropTypes.object,
@@ -83,8 +79,10 @@ const styles = StyleSheet.create({
         top: 5
     },
     label: {
-        fontWeight: '700',
         marginBottom: 5,
+        fontFamily: 'Rubik-Regular',
+        fontStyle: 'normal',
+        fontWeight: 'normal',    
     },
     inputField: {
         borderBottomWidth: 1,

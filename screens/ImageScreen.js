@@ -9,8 +9,6 @@ import {
     ScrollView
 } from 'react-native';
 
-import { Avatar, Icon } from 'react-native-elements';
-
 export default class ImageScreen extends Component {
     static navigationOptions = {
         header: null,
@@ -79,28 +77,10 @@ export default class ImageScreen extends Component {
                                     source={{ uri: wallpaper.webformatURL}}/>
                                 <View style={styles.containerRow}>
                                     <View style={styles.containerAuthorRow}>
-                                        <Avatar
-                                            small
-                                            rounded
-                                            style={styles.authorPhoto}
-                                            source={{ uri: wallpaper.userImageURL ? wallpaper.userImageURL : 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg' }}
-                                        />
                                         <Text style={styles.authorName}>{wallpaper.user}</Text>
                                     </View>
                                     <View style={styles.containerLikesRow}>
-                                        <Icon
-                                            name='heart'
-                                            size={18}
-                                            type='font-awesome'
-                                            color='#EE1E2C'
-                                        />
                                         <Text style={styles.curent}>{wallpaper.likes}</Text>
-                                        <Icon
-                                            name='download'
-                                            size={18}
-                                            type='font-awesome'
-                                            color='#000000'
-                                        />
                                         <Text style={styles.curent}>{wallpaper.downloads}</Text>
                                     </View>
                                 </View>     

@@ -41,6 +41,9 @@ const styles = StyleSheet.create({
         borderRadius: 2
     },
     buttonText: {
+        fontFamily: 'Rubik-Regular',
+        fontStyle: 'normal',
+        fontWeight: 'normal',    
         textAlign: 'center',
     }
 });

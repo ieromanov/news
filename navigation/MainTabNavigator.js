@@ -1,7 +1,7 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { createBottomTabNavigator, BottomTabBar } from 'react-navigation';
+import { createMaterialTopTabNavigator, BottomTabBar } from 'react-navigation';
 
 import Colors from '../constants/Colors';
 
@@ -9,7 +9,7 @@ import HomeScreen from '../screens/HomeScreen';
 import ImageScreen from '../screens/ImageScreen';
 import NewsScreen from '../screens/NewsScreen';
 
-export default createBottomTabNavigator(
+export default createMaterialTopTabNavigator(
   {
     Home: {
       screen: HomeScreen,
@@ -50,14 +50,21 @@ export default createBottomTabNavigator(
         );
       },
     }),
+    optimizationsEnabled: true,
     tabBarComponent: BottomTabBar,
     tabBarPosition: 'bottom', 
     tabBarOptions: {
+      showIcon: false,
+      showLabel: true,
       labelStyle: {
-        color: '#000000'
+        color: Colors.white
+      },
+      style: {
+        backgroundColor: Colors.black,
       },
     },
-    inactiveTintColor: '#ccc',
+    inactiveTintColor: Colors.white,
     animationEnabled: true,
+    swipeEnabled: true,
   }
 );
