@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent  } from 'react';
 import {
     View,
     TouchableHighlight,
@@ -11,7 +11,7 @@ import apiKey from '../../../api/apiKey.json';
 
 import HeaderBack from '../../headers/HeaderBack';
 
-export default class JournalList extends Component {
+export default class JournalList extends PureComponent {
     static navigationOptions = ({ navigation }) => ({
         header: <HeaderBack 
                     title={navigation.state.params.name}

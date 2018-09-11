@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent  } from 'react';
 import {
     View,
     TouchableHighlight,
@@ -13,7 +13,7 @@ import colors from '../../../constants/Colors'
 
 import HeaderBack from '../../headers/HeaderBack'
 
-export default class NewsList extends Component {
+export default class NewsList extends PureComponent  {
     static navigationOptions = ({ navigation }) => ({
         header: <HeaderBack 
                     title={navigation.state.params.name}
@@ -35,7 +35,6 @@ export default class NewsList extends Component {
         const { navigation } = this.props;
         const { date, wallsJSON } = this.state;
         this.setState({ loading: true });
-        console.log("fetch date: ", date)
         const url = `https://newsapi.org/v2/everything?sources=${navigation.state.params.sources}&to=${this.formatDate(date)}&pageSize=10&apiKey=${apiKey['api']}`;
         this.decrementDate()
         fetch(url)
@@ -87,7 +86,6 @@ export default class NewsList extends Component {
     }
 
     loadMoreNews = () => {
-        console.log("decrementDate: ", this.decrementDate())
         this.fetchWallsJSON()
     }
 
