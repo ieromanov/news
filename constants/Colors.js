@@ -5,5 +5,6 @@ export default {
   violet: '#5829BB',
   blue: '#1678C2',
   
+  transparent: "transparent",
   errorColor: '#d93900',
 };

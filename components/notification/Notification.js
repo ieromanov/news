@@ -74,9 +74,9 @@ const styles = StyleSheet.create({
         zIndex: 999,
     },
     notificatoinType: {
-        fontFamily: 'Rubik-Bold',
+        fontFamily: 'Rubik-Regular',
         fontStyle: 'normal',
-        fontWeight: 'bold',
+        fontWeight: 'normal',
     },
     notificatoinText: {
         fontFamily: 'Rubik-Regular',

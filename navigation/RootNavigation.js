@@ -6,13 +6,9 @@ import MainTabNavigator from './MainTabNavigator';
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
 import LoginScreen from '../screens/LoginScreen';
-import GreetingScreen from '../screens/GreetingScreen'
 
 const RootStackNavigator = createStackNavigator (
   {
-    Greeting: {
-      screen: GreetingScreen,
-    },
     Login: {
       screen: LoginScreen,
     },

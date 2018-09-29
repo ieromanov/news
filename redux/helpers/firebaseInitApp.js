@@ -1,6 +1,6 @@
-import * as firebase from 'firebase';
+import firebase from 'firebase';
 
-const firebaseInitializeApp = () => {
+const firebaseInitApp = () => {
     firebase.initializeApp({
         apiKey: "AIzaSyAPqxLILZcFCTLRyIOYpQinWqa6g1daWmg",
         authDomain: "auth-project-a886b.firebaseapp.com",
@@ -12,4 +12,4 @@ const firebaseInitializeApp = () => {
     firebase.auth().useDeviceLanguage();
 }
 
-export default firebaseInitializeApp
+export default firebaseInitApp
