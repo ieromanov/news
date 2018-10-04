@@ -11,16 +11,16 @@ import { TextInput } from '@shoutem/ui'
 
 import colors from '../../constants/Colors'
 
-export default InputField = ({ labelText, labelTextSize,  textColor,  inputType, customStyle}) => {
+export default InputField = ({ labelText, labelTextSize,  textColor,  inputType, onChange, customStyle}) => {
     state = {
-        showPassword: this.props.inputType === 'password' ? true : false,
+        showPassword: inputType === 'password' ? true : false,
     }
 
     handlerChange = (text) => {
         const value = text;
-        const fieldName = this.props.inputType;
+        const fieldName = inputType;
         
-        this.props.onChange(value, fieldName);
+        onChange(value, fieldName);
     } 
 
     toggleShowPassword = () => {
@@ -47,7 +47,7 @@ export default InputField = ({ labelText, labelTextSize,  textColor,  inputType,
                     underlineColorAndroid="transparent"
                     placeholder={labelText}
                     onChangeText={this.handlerChange} 
-                    secureTextEntry={showPassword}
+                    secureTextEntry={this.state.showPassword}
                 />
             </View>
         );
@@ -56,9 +56,9 @@ export default InputField = ({ labelText, labelTextSize,  textColor,  inputType,
 
 InputField.defaultProps = {
     labelTextSize: 18,
-    textColor: colors.white,
+    textColor: colors.white
 }
-InputField.protoTypes = {
+InputField.propTypes = {
     labelText: PropTypes.string.isRequired,
     labelTextSize: PropTypes.number,
     textColor: PropTypes.string,
