@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { PropTypes } from 'prop-types'
 import { Ionicons } from '@expo/vector-icons';
 import {
@@ -11,7 +11,7 @@ import { TextInput } from '@shoutem/ui'
 
 import colors from '../../constants/Colors'
 
-export default class InputField extends Component {
+export default InputField = ({ labelText, labelTextSize,  textColor,  inputType, customStyle}) => {
     state = {
         showPassword: this.props.inputType === 'password' ? true : false,
     }
@@ -28,21 +28,15 @@ export default class InputField extends Component {
             showPassword: !this.state.showPassword
         })
     }
-
-    render(){
-        const { labelText, labelTextSize,  textColor,  inputType, customStyle } = this.props
-        const { showPassword } = this.state
-        const labelFontSize = labelTextSize || 18;
-        const color = textColor || colors.white;
         return (
             <View style={[customStyle, styles.wrapper]}>
-                <Text style={[{color, fontSize: labelFontSize}, styles.label]}>{labelText}</Text>
+                <Text style={[{color: textColor, fontSize: labelTextSize}, styles.label]}>{labelText}</Text>
                 {
                     inputType === 'password' ? 
                         <Ionicons 
-                            name={showPassword ? 'ios-eye-outline' : 'ios-eye-off-outline'} 
-                            size={labelFontSize} 
-                            color={color} 
+                            name={this.state.showPassword ? 'ios-eye-outline' : 'ios-eye-off-outline'} 
+                            size={labelTextSize} 
+                            color={textColor} 
                             style={styles.showPasswordButton} 
                             onPress={this.toggleShowPassword}
                         /> :
@@ -57,9 +51,13 @@ export default class InputField extends Component {
                 />
             </View>
         );
-    }
 }
 
+
+InputField.defaultProps = {
+    labelTextSize: 18,
+    textColor: colors.white,
+}
 InputField.protoTypes = {
     labelText: PropTypes.string.isRequired,
     labelTextSize: PropTypes.number,

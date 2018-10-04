@@ -1,5 +1,5 @@
-import React, { PureComponent } from "react";
-import PropTypes from 'prop-types'
+import React from "react";
+import PropTypes from "prop-types";
 import { View, SafeAreaView, Text, Dimensions, StyleSheet } from "react-native";
 import IconButton from "../buttons/IconButton";
 
@@ -9,52 +9,30 @@ import colors from "../../constants/Colors";
   Icons: expo -> MaterialCommunityIcons
 */
 
-export default class HeaderBack extends PureComponent {
-  render() {
-    const { goBack } = this.props.navigation;
-    const { title } = this.props;
-    const button = this.props.showButton || false;
+export default HeaderBack = props => {
+  const { goBack } = props.navigation;
+  const { title } = props;
 
-    const followOnJournal = () => {
-      console.log("Hi");
-    };
+  return (
+    <View style={styles.header}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.buttonWrapper}>
+          <IconButton
+            iconName="chevron-left"
+            handlerButton={() => goBack(null)}
+          />
+        </View>
+        <View style={styles.titleWrapper}>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+      </SafeAreaView>
+    </View>
+  );
+};
 
-    console.log(button)
-
-    return (
-      <View style={styles.header}>
-        <SafeAreaView style={styles.container}>
-          <View style={styles.buttonWrapper}>
-            <IconButton
-              iconName="arrow-left"
-              handlerButton={() => goBack(null)}
-            />
-          </View>
-          <View style={styles.titleWrapper}>
-            <Text style={styles.title}>{title}</Text>
-          </View>
-          {button && (
-            <View style={styles.buttonWrapper}>
-              <IconButton
-                style={styles.button}
-                iconName={"star-outline" || "star"}
-                handlerButton={followOnJournal}
-              />
-            </View>
-          )}
-        </SafeAreaView>
-      </View>
-    );
-  }
-}
-
-HeaderBack.defaultProps = {
-  button: false,
-}
-HeaderBack.protoTypes = {
-  title: PropTypes.string.isRequired,
-  button: PropTypes.bool,
-}
+HeaderBack.propTypes = {
+  title: PropTypes.string.isRequired
+};
 
 const styles = StyleSheet.create({
   header: {

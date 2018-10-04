@@ -7,13 +7,11 @@ const signUp = (email, password ) => {
         
         firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(()=> {
-                console.log('Функция регистрации: срабоотала')
                 dispatch(setSignUpState(true))
                 return true
             })
             .catch((error)=>{
                 console.log(error)
-                console.log('Функция регистрации: не срабоотала')
                 dispatch(setSignUpState(false));
                 return false
             });

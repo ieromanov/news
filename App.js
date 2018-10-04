@@ -1,82 +1,63 @@
-import React, { Component } from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import { AppLoading, Asset, Font } from 'expo';
-import RootNavigation from './navigation/RootNavigation';
+import React, { Component } from "react";
+import { Platform, StatusBar, StyleSheet, View } from "react-native";
+import { AppLoading, Font } from "expo";
+import RootNavigation from "./navigation/RootNavigation";
 
-import { Provider } from 'react-redux'
-import store from './redux/store'
-import colors from './constants/Colors'
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import colors from "./constants/Colors";
 
-import firebaseInitApp from './redux/helpers/firebaseInitApp';
+import "./redux/helpers/firebaseInitApp";
 
-firebaseInitApp();
+console.ignoredYellowBox = ["Setting a timer"];
 
 export default class App extends Component {
   state = {
-    isLoadingComplete: false,
+    isLoadingComplete: false
   };
 
+  async componentDidMount() {
+    await Font.loadAsync({
+      'Rubik-Black': require('./assets/fonts/Rubik-Black.ttf'),
+      'Rubik-BlackItalic': require('./assets/fonts/Rubik-BlackItalic.ttf'),
+      'Rubik-Bold': require('./assets/fonts/Rubik-Bold.ttf'),
+      'Rubik-BoldItalic': require('./assets/fonts/Rubik-BoldItalic.ttf'),
+      'Rubik-Italic': require('./assets/fonts/Rubik-Italic.ttf'),
+      'Rubik-Light': require('./assets/fonts/Rubik-Light.ttf'),
+      'Rubik-LightItalic': require('./assets/fonts/Rubik-LightItalic.ttf'),
+      'Rubik-Medium': require('./assets/fonts/Rubik-Medium.ttf'),
+      'Rubik-MediumItalic': require('./assets/fonts/Rubik-MediumItalic.ttf'),
+      'Rubik-Regular': require('./assets/fonts/Rubik-Regular.ttf'),
+      'rubicon-icon-font': require('./assets/fonts/rubicon-icon-font.ttf'),
+    });
+    this.setState({ isLoadingComplete: true });
+  }
+
   render() {
-    if (!this.state.isLoadingComplete) {
+    if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
-        <AppLoading
-          startAsync={this._loadResourcesAsync}
-          onError={this._handleLoadingError}
-          onFinish={this._handleFinishLoading}
-        />
+        <AppLoading />
       );
     }
     return (
       <Provider store={store}>
         <View style={styles.container}>
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+          {Platform.OS === "ios" && <StatusBar barStyle="default" />}
           {/* {Platform.OS === 'android' && <View style={styles.statusBarUnderlay} />} */}
           <RootNavigation />
         </View>
       </Provider>
     );
   }
-
-  _loadResourcesAsync = async () => {
-    return Promise.all([
-      Asset.loadAsync([
-        require('./assets/images/robot-dev.png'),
-        require('./assets/images/robot-prod.png'),
-      ]),
-      Font.loadAsync({
-        'Rubik-Black': require('./node_modules/@shoutem/ui/fonts/Rubik-Black.ttf'),
-        'Rubik-BlackItalic': require('./node_modules/@shoutem/ui/fonts/Rubik-BlackItalic.ttf'),
-        'Rubik-Bold': require('./node_modules/@shoutem/ui/fonts/Rubik-Bold.ttf'),
-        'Rubik-BoldItalic': require('./node_modules/@shoutem/ui/fonts/Rubik-BoldItalic.ttf'),
-        'Rubik-Italic': require('./node_modules/@shoutem/ui/fonts/Rubik-Italic.ttf'),
-        'Rubik-Light': require('./node_modules/@shoutem/ui/fonts/Rubik-Light.ttf'),
-        'Rubik-LightItalic': require('./node_modules/@shoutem/ui/fonts/Rubik-LightItalic.ttf'),
-        'Rubik-Medium': require('./node_modules/@shoutem/ui/fonts/Rubik-Medium.ttf'),
-        'Rubik-MediumItalic': require('./node_modules/@shoutem/ui/fonts/Rubik-MediumItalic.ttf'),
-        'Rubik-Regular': require('./node_modules/@shoutem/ui/fonts/Rubik-Regular.ttf'),
-        'rubicon-icon-font': require('./node_modules/@shoutem/ui/fonts/rubicon-icon-font.ttf'),
-      })
-    ]);
-  };
-
-  _handleLoadingError = error => {
-    // In this case, you might want to report the error to your error
-    // reporting service, for example Sentry
-    console.warn(error);
-  };
-
-  _handleFinishLoading = () => {
-    this.setState({ isLoadingComplete: true });
-  };
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff"
   },
   statusBarUnderlay: {
     height: 24,
-    backgroundColor: colors.white,
-  },
+    backgroundColor: colors.white
+  }
 });

@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { PropTypes } from "prop-types";
 import { TouchableOpacity, StyleSheet } from "react-native";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 
 import colors from "../../constants/Colors";
 
@@ -15,13 +15,12 @@ export default class IconButton extends PureComponent {
       sizeIcon
     } = this.props;
 
-    // console.log("handlerButton", handlerButton)
     return (
       <TouchableOpacity
         style={[{ backgroundColor: buttonColor }, styles.button]}
         onPress={handlerButton}
       >
-        <MaterialCommunityIcons
+        <Entypo
           name={iconName}
           size={sizeIcon}
           style={[{ color: buttonIconColor }, styles.buttonText]}

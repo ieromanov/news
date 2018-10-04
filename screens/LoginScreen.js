@@ -8,6 +8,7 @@ import ActionCreators from "../redux/actions";
 import InputField from "../components/forms/InputField";
 import DefaultButton from "../components/buttons/DefaultButton";
 import Notification from "../components/notification/Notification";
+import DefaultLoader from "../components/preloader/DefaultLoader";
 import colors from "../constants/Colors";
 
 class LoginScreen extends Component {
@@ -15,6 +16,7 @@ class LoginScreen extends Component {
     super();
 
     this.state = {
+      loading: false,
       email: "",
       password: "",
       error: "",
@@ -99,7 +101,7 @@ class LoginScreen extends Component {
       : null;
   };
 
-  render() {
+  renderResults = () => {
     return (
       <KeyboardAvoidingView style={styles.wrapper} behavior={Platform.OS === "ios" ? "padding" : null}>
         <View>
@@ -107,8 +109,8 @@ class LoginScreen extends Component {
             type="Error"
             errorText={this.state.error}
             textColor={colors.black}
-            backgroundNotificationColor={colors.white}
-            showError={this.state.showError}
+            backgroundColor={colors.white}
+            showNotification={this.state.showError}
             closeNotification={this.closeNotification}
           />
         </View>
@@ -149,16 +151,15 @@ class LoginScreen extends Component {
       </KeyboardAvoidingView>
     );
   }
+  
+  render() {
+    return this.state.loading
+      ? <DefaultLoader />
+      : this.renderResults();
+  }
 }
 
 const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff"
-  },
   wrapper: {
     display: "flex",
     flex: 1,

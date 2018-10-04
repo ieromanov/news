@@ -1,33 +1,33 @@
-import React, { Component } from "react";
+import React from "react";
 import { PropTypes } from "prop-types";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 
 import colors from "../../constants/Colors";
 
-export default class DefaultButton extends Component {
-  render() {
+export default DefaultButton = (props) => {
     const {
       buttonText,
       buttonTextColor,
       buttonColor,
       handlerButton
-    } = this.props;
-    const color = buttonTextColor || colors.white;
-    const backgroundColor = buttonColor || colors.black;
+    } = props;
 
     return (
       <TouchableOpacity
-        style={[{ backgroundColor }, styles.button]}
+        style={[{ backgroundColor: buttonColor }, styles.button]}
         onPress={handlerButton}
       >
-        <Text style={[{ color }, styles.buttonText]}>{buttonText}</Text>
+        <Text style={[{ color: buttonTextColor }, styles.buttonText]}>{buttonText}</Text>
       </TouchableOpacity>
     );
-  }
 }
 
-DefaultButton.protoTypes = {
-  textButton: PropTypes.string.isRequired,
+DefaultButton.defaultProps = {
+  buttonColor: colors.white,
+  buttonTextColor: colors.black,
+}
+DefaultButton.propTypes = {
+  buttonText: PropTypes.string.isRequired,
   buttonColor: PropTypes.string,
   buttonTextColor: PropTypes.string,
   handlerButton: PropTypes.func

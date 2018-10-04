@@ -1,16 +1,13 @@
 import React, { Component } from "react";
-import {
-  View,
-  TouchableHighlight,
-  ActivityIndicator,
-  RefreshControl,
-  StyleSheet
-} from "react-native";
+import { View, TouchableOpacity } from "react-native";
 
 import { Row, Divider, Title, Icon, ListView } from "@shoutem/ui";
 
-import * as countries from "../../../assets/data/iso-3166.json";
+import DefaultLoader from "../../preloader/DefaultLoader";
+
+import * as countriesISO3166 from "../../../assets/data/iso-3166.json";
 import apiKey from "../../../api/apiKey.json";
+import RowCard from "../../cards/RowCard";
 
 export default class CountryList extends Component {
   static navigationOptions = {
@@ -18,52 +15,38 @@ export default class CountryList extends Component {
   };
 
   state = {
-    wallsJSON: {},
-    loading: true,
-    countryArr: []
+    countries: [],
+    loading: true
   };
 
   componentDidMount = () => {
-    this.fetchWallsJSON();
+    this.getCountry();
   };
 
   componentWillMount = () => {
     this.state.loading = true;
   };
 
-  fetchWallsJSON = () => {
+  getCountry = async () => {
     this.setState({ loading: true });
     const url = `https://newsapi.org/v2/sources?apiKey=${apiKey["api"]}`;
-    fetch(url)
-      .then(response => response.json())
-      .then(jsonData => {
-        this.state.wallsJSON = {};
-        this.state.wallsJSON = jsonData.sources;
+    let response = await fetch(url);
+    let jsonData = await response.json();
 
-        this.setState({
-          loading: false,
-          wallsJSON: this.state.wallsJSON
-        });
-      })
-      .catch(error => console.log("JSON Fetch error : " + error));
-  };
-
-  renderLoadingSpinner = () => {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator animating color={"#000000"} size={"large"} />
-      </View>
-    );
+    this.setState({
+      loading: false,
+      countries: jsonData.sources
+    });
   };
 
   sortByCountry = arrCountry => {
     let arr = [];
 
-    arrCountry.map((country, index) => {
+    arrCountry.map(country => {
       if (arr.includes(country.country)) {
         return;
       } else {
-        arr.push(country.country);
+        arr = [...arr, country.country];
       }
     });
     return arr;
@@ -72,54 +55,30 @@ export default class CountryList extends Component {
   renderRow = country => {
     const { navigate } = this.props.navigation;
     return (
-      <View>
-        <TouchableHighlight
-          onPress={() => {
-            navigate("JournalList", {
-              name: countries[country],
-              country: country
-            });
-          }}
-        >
-          <Row styleName="small">
-            <Title>{countries[country]}</Title>
-            <Icon name="right-arrow" />
-          </Row>
-        </TouchableHighlight>
-        <Divider styleName="line" />
-      </View>
+      <RowCard
+        text={countriesISO3166[country]}
+        iconName="chevron-thin-right"
+        onPress={() => {
+          navigate("JournalList", {
+            name: countriesISO3166[country],
+            country: country
+          });
+        }}
+      />
     );
   };
 
   renderResults = () => {
-    const { wallsJSON } = this.state;
+    const { countries } = this.state;
     return (
       <ListView
-        data={this.sortByCountry(wallsJSON)}
+        data={this.sortByCountry(countries)}
         renderRow={this.renderRow}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.loading}
-            onRefresh={this.fetchWallsJSON}
-          />
-        }
       />
     );
   };
 
   render() {
-    return this.state.loading
-      ? this.renderLoadingSpinner()
-      : this.renderResults();
+    return this.state.loading ? <DefaultLoader /> : this.renderResults();
   }
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff"
-  }
-});

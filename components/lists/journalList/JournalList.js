@@ -1,15 +1,12 @@
 import React, { PureComponent } from "react";
-import {
-  View,
-  TouchableHighlight,
-  ActivityIndicator,
-  StyleSheet
-} from "react-native";
-import { Row, Divider, Title, Icon, ListView } from "@shoutem/ui";
+import { ListView } from "@shoutem/ui";
+import firebase from "firebase";
 
 import apiKey from "../../../api/apiKey.json";
 
 import HeaderBack from "../../headers/HeaderBack";
+import DefaultLoader from "../../preloader/DefaultLoader";
+import RowCard from '../../cards/RowCard';
 
 export default class JournalList extends PureComponent {
   static navigationOptions = ({ navigation }) => ({
@@ -22,98 +19,65 @@ export default class JournalList extends PureComponent {
   });
 
   state = {
-    wallsJSON: [],
-    loading: true
+    journals: [],
+    followJournals: [],
+    loading: true,
+    modalVisible: false
   };
 
-  componentDidMount = () => {
-    this.fetchWallsJSON();
+  setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
   };
 
-  fetchWallsJSON = () => {
+  componentDidMount = async () => {
+    await this.getFollowJournals();
+    await this.getJournals();
+  };
+
+  getFollowJournals = async () => {
+    let userID = firebase.auth().currentUser.uid;
+    let database = firebase.database();
+
+    let userResponse = await database.ref("/" + userID);
+    let userFollowResponse = await userResponse.once("value");
+    let userFollowData = await userFollowResponse.val();
+
+    for (key in userFollowData) {
+      this.setState({
+        followJournals: [...this.state.followJournals, userFollowData[key]]
+      });
+    }
+  };
+
+  getJournals = async () => {
     const { navigation } = this.props;
-
     this.setState({ loading: true });
-    const url = `https://newsapi.org/v2/sources?country=${navigation.state.params.country}&apiKey=${apiKey["api"]}`;
-    fetch(url)
-      .then(response => response.json())
-      .then(jsonData => {
-        this.setState({
-          loading: false,
-          wallsJSON: jsonData.sources
-        });
-      })
-      .catch(error => console.log("JSON Fetch error : " + error));
-  };
 
-  renderLoadingSpinner = () => {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator animating color={"#000000"} size={"large"} />
-      </View>
-    );
+    const url = `https://newsapi.org/v2/sources?country=${
+      navigation.state.params.country
+    }&apiKey=${apiKey["api"]}`;
+    let journalResp = await fetch(url);
+    let journalData = await journalResp.json();
+
+    this.setState({
+      loading: false,
+      journals: journalData.sources
+    });
   };
 
   renderRow = journal => {
-    const { navigate } = this.props.navigation;
+    const { followJournals } = this.state;
     return (
-      <View>
-        <TouchableHighlight
-          onPress={() =>
-            navigate("NewsList", {
-              name: journal.name,
-              country: journal.country,
-              sources: journal.id
-            })
-          }
-        >
-          <Row styleName="small">
-            <Title>{journal.name}</Title>
-            <Icon name="right-arrow" />
-          </Row>
-        </TouchableHighlight>
-        <Divider styleName="line" />
-      </View>
+      <RowCard text={journal.name} iconName={followJournals.includes(journal.id) ? "heart" : "heart-outlined"} />
     );
   };
 
+  renderResults = () => {
+    const { journals } = this.state;
+    return <ListView data={journals} renderRow={this.renderRow} />;
+  };
+
   render() {
-    const { wallsJSON, loading } = this.state;
-    return (
-      <ListView data={wallsJSON} renderRow={this.renderRow} loading={loading} />
-    );
+    return this.state.loading ? <DefaultLoader /> : this.renderResults();
   }
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff"
-  },
-  touchableComponent: {
-    backgroundColor: "#ffffff",
-    borderRadius: 4,
-    borderWidth: 0.5,
-    paddingLeft: 15,
-    borderColor: "#d6d7da",
-    paddingVertical: 20
-  },
-  sourceContainer: {
-    display: "flex",
-    flexDirection: "row"
-  },
-  sourceName: {
-    flex: 5,
-    color: "rgba(0,0,0,0.5)"
-  },
-  sourceArrow: {
-    marginRight: 20,
-    color: "rgba(0,0,0,0.5)"
-  },
-  sourseArrow: {
-    flex: 1
-  }
-});
