@@ -1,13 +1,11 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity } from "react-native";
-
-import { Row, Divider, Title, Icon, ListView } from "@shoutem/ui";
+import { ListView } from "@shoutem/ui";
 
 import DefaultLoader from "../../preloader/DefaultLoader";
+import RowCard from "../../cards/RowCard";
 
 import * as countriesISO3166 from "../../../assets/data/iso-3166.json";
 import apiKey from "../../../api/apiKey.json";
-import RowCard from "../../cards/RowCard";
 
 export default class CountryList extends Component {
   static navigationOptions = {

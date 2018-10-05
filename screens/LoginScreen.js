@@ -20,7 +20,8 @@ class LoginScreen extends Component {
       email: "",
       password: "",
       error: "",
-      showError: false
+      showError: false,
+      showPassword: false
     };
   }
 
@@ -79,6 +80,12 @@ class LoginScreen extends Component {
     });
   };
 
+  toggleShowPassword = () => {
+    this.setState({
+      showPassword: !this.state.showPassword
+    });
+  };
+
   onLoginPress = () => {
     this.setState({ error: "" });
 
@@ -102,15 +109,16 @@ class LoginScreen extends Component {
   };
 
   renderResults = () => {
+    const { error, showError, showPassword } = this.state;
     return (
       <KeyboardAvoidingView style={styles.wrapper} behavior={Platform.OS === "ios" ? "padding" : null}>
         <View>
           <Notification
             type="Error"
-            errorText={this.state.error}
+            errorText={error}
             textColor={colors.black}
             backgroundColor={colors.white}
-            showNotification={this.state.showError}
+            showNotification={showError}
             closeNotification={this.closeNotification}
           />
         </View>
@@ -131,6 +139,8 @@ class LoginScreen extends Component {
             textColor={colors.black}
             inputType="password"
             onChange={this.onChangeInput}
+            toggleShowPassword={this.toggleShowPassword}
+            showPassword={showPassword}
             customStyle={{ marginTop: 20 }}
           />
           <View style={styles.buttonWrapper}>
@@ -138,13 +148,13 @@ class LoginScreen extends Component {
               buttonText="Log In"
               buttonColor={colors.black}
               buttonTextColor={colors.white}
-              handlerButton={this.onLoginPress}
+              onPress={this.onLoginPress}
             />
             <DefaultButton
               buttonText="Sign Up"
               buttonColor={colors.white}
               buttonTextColor={colors.black}
-              handlerButton={this.onSingUpPress}
+              onPress={this.onSingUpPress}
             />
           </View>
         </View>
@@ -172,7 +182,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30
   },
   buttonWrapper: {
-    marginTop: 40,
+    justifyContent: 'space-around',
+    marginTop: 20,
     flexDirection: "row"
   }
 });

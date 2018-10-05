@@ -9,9 +9,8 @@ import colors from "../../constants/Colors";
   Icons: expo -> MaterialCommunityIcons
 */
 
-export default HeaderBack = props => {
-  const { goBack } = props.navigation;
-  const { title } = props;
+export default HeaderBack = ({ title, navigation }) => {
+  const { goBack } = navigation;
 
   return (
     <View style={styles.header}>
@@ -19,7 +18,7 @@ export default HeaderBack = props => {
         <View style={styles.buttonWrapper}>
           <IconButton
             iconName="chevron-left"
-            handlerButton={() => goBack(null)}
+            onPress={() => goBack(null)}
           />
         </View>
         <View style={styles.titleWrapper}>

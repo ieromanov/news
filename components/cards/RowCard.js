@@ -14,7 +14,7 @@ export default (RowCard = ({
   return (
     <View style={[{ backgroundColor }, styles.container]}>
       <Text style={styles.text}>{text}</Text>
-      {iconName && <IconButton iconName={iconName} handlerButton={onPress}/>}
+      {iconName && <IconButton iconName={iconName} onPress={onPress}/>}
     </View>
   );
 });

@@ -1,39 +1,35 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import { PropTypes } from "prop-types";
 import { TouchableOpacity, StyleSheet } from "react-native";
-import { Entypo } from '@expo/vector-icons';
+import { Entypo } from "@expo/vector-icons";
 
 import colors from "../../constants/Colors";
 
-export default class IconButton extends PureComponent {
-  render() {
-    const {
-      iconName,
-      buttonColor,
-      buttonIconColor,
-      handlerButton,
-      sizeIcon
-    } = this.props;
-
-    return (
-      <TouchableOpacity
-        style={[{ backgroundColor: buttonColor }, styles.button]}
-        onPress={handlerButton}
-      >
-        <Entypo
-          name={iconName}
-          size={sizeIcon}
-          style={[{ color: buttonIconColor }, styles.buttonText]}
-        />
-      </TouchableOpacity>
-    );
-  }
-}
+export default (IconButton = ({
+  iconName,
+  buttonColor,
+  buttonIconColor,
+  onPress,
+  sizeIcon
+}) => {
+  return (
+    <TouchableOpacity
+      style={[{ backgroundColor: buttonColor }, styles.button]}
+      onPress={onPress}
+    >
+      <Entypo
+        name={iconName}
+        size={sizeIcon}
+        style={[{ color: buttonIconColor }, styles.buttonText]}
+      />
+    </TouchableOpacity>
+  );
+});
 
 IconButton.defaultProps = {
   buttonColor: colors.transparent,
   buttonIconColor: colors.black,
-  sizeIcon: 24,
+  sizeIcon: 24
 };
 
 IconButton.protoTypes = {
@@ -41,7 +37,7 @@ IconButton.protoTypes = {
   buttonColor: PropTypes.string,
   buttonIconColor: PropTypes.string,
   sizeIcon: PropTypes.num,
-  handlerButton: PropTypes.func
+  onPress: PropTypes.func
 };
 
 const styles = StyleSheet.create({

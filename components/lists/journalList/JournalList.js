@@ -1,12 +1,13 @@
 import React, { PureComponent } from "react";
-import { ListView } from "@shoutem/ui";
+import { ListView, View } from "@shoutem/ui";
 import firebase from "firebase";
 
 import apiKey from "../../../api/apiKey.json";
 
 import HeaderBack from "../../headers/HeaderBack";
 import DefaultLoader from "../../preloader/DefaultLoader";
-import RowCard from '../../cards/RowCard';
+import RowCard from "../../cards/RowCard";
+import BottomModal from "../../modal/BottomModal";
 
 export default class JournalList extends PureComponent {
   static navigationOptions = ({ navigation }) => ({
@@ -22,12 +23,14 @@ export default class JournalList extends PureComponent {
     journals: [],
     followJournals: [],
     loading: true,
-    modalVisible: false
+    visibleModal: false,
+    titleModal: "",
+    descModal: ""
   };
 
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
-  };
+  }
 
   componentDidMount = async () => {
     await this.getFollowJournals();
@@ -53,9 +56,7 @@ export default class JournalList extends PureComponent {
     const { navigation } = this.props;
     this.setState({ loading: true });
 
-    const url = `https://newsapi.org/v2/sources?country=${
-      navigation.state.params.country
-    }&apiKey=${apiKey["api"]}`;
+    const url = `https://newsapi.org/v2/sources?country=${navigation.state.params.country}&apiKey=${apiKey["api"]}`;
     let journalResp = await fetch(url);
     let journalData = await journalResp.json();
 
@@ -65,16 +66,52 @@ export default class JournalList extends PureComponent {
     });
   };
 
+  openModal = (title, description) => {
+    this.setState({
+      visibleModal: true,
+      titleModal: title,
+      descModal: description
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      visibleModal: false
+    });
+  };
+
   renderRow = journal => {
     const { followJournals } = this.state;
     return (
-      <RowCard text={journal.name} iconName={followJournals.includes(journal.id) ? "heart" : "heart-outlined"} />
+      <RowCard
+        text={journal.name}
+        iconName={
+          followJournals.includes(journal.id) ? "heart" : "heart-outlined"
+        }
+        onPress={()=>this.openModal(journal.name, journal.description)}
+      />
     );
   };
 
   renderResults = () => {
-    const { journals } = this.state;
-    return <ListView data={journals} renderRow={this.renderRow} />;
+    const {
+      journals,
+      visibleModal,
+      titleModal,
+      descModal
+    } = this.state;
+    return (
+      <View>
+        <ListView data={journals} renderRow={this.renderRow} />
+        <BottomModal
+          isVisible={visibleModal}
+          title={titleModal}
+          description={descModal}
+          textButton={"Follow"}
+          onPressClose={this.closeModal}
+        />
+      </View>
+    );
   };
 
   render() {
