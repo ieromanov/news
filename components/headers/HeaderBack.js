@@ -6,7 +6,7 @@ import IconButton from "../buttons/IconButton";
 import colors from "../../constants/Colors";
 
 /*
-  Icons: expo -> MaterialCommunityIcons
+  Icons: expo -> Entypo
 */
 
 export default HeaderBack = ({ title, navigation }) => {
