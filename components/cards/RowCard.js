@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { View, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import IconButton from "../buttons/IconButton";
 
 import colors from "../../constants/Colors";
@@ -9,13 +9,14 @@ export default (RowCard = ({
   text,
   iconName,
   backgroundColor,
-  onPress
+  onPress,
+  onPressIcon
 }) => {
   return (
-    <View style={[{ backgroundColor }, styles.container]}>
+    <TouchableOpacity style={[{ backgroundColor }, styles.container]} onPress={onPress} >
       <Text style={styles.text}>{text}</Text>
-      {iconName && <IconButton iconName={iconName} onPress={onPress}/>}
-    </View>
+      {iconName && <IconButton iconName={iconName} onPress={onPressIcon}/>}
+    </TouchableOpacity>
   );
 });
 
@@ -27,7 +28,9 @@ RowCard.propTypes = {
   text: PropTypes.string.isRequired,
   iconName: PropTypes.string,
   backgroundColor: PropTypes.string,
-  showButton: PropTypes.bool
+  showButton: PropTypes.bool,
+  onPress: PropTypes.func.isRequired,
+  onPressIcon: PropTypes.func,
 };
 
 const styles = StyleSheet.create({

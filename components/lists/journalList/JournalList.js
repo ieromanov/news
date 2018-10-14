@@ -1,6 +1,9 @@
-import React, { PureComponent } from "react";
-import { ListView, View } from "@shoutem/ui";
-import firebase from "firebase";
+import React, { Component } from "react";
+import { View, FlatList } from "react-native";
+
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import ActionCreators from "../../../redux/actions";
 
 import apiKey from "../../../api/apiKey.json";
 
@@ -9,7 +12,7 @@ import DefaultLoader from "../../preloader/DefaultLoader";
 import RowCard from "../../cards/RowCard";
 import BottomModal from "../../modal/BottomModal";
 
-export default class JournalList extends PureComponent {
+class JournalList extends Component {
   static navigationOptions = ({ navigation }) => ({
     header: (
       <HeaderBack
@@ -28,34 +31,34 @@ export default class JournalList extends PureComponent {
     descModal: ""
   };
 
-  setModalVisible(visible) {
-    this.setState({ modalVisible: visible });
-  }
-
-  componentDidMount = async () => {
-    await this.getFollowJournals();
-    await this.getJournals();
+  componentDidMount = () => {
+    // await this.getFollowJournals();
+    this.getJournals();
   };
 
   getFollowJournals = async () => {
-    let userID = firebase.auth().currentUser.uid;
-    let database = firebase.database();
+    const { getJournalSubscriptions, journalSubscriptions } = this.props;
+    await getJournalSubscriptions();
 
-    let userResponse = await database.ref("/" + userID);
-    let userFollowResponse = await userResponse.once("value");
-    let userFollowData = await userFollowResponse.val();
+    console.log("Подписки из props", journalSubscriptions);
 
-    for (key in userFollowData) {
-      this.setState({
-        followJournals: [...this.state.followJournals, userFollowData[key]]
-      });
+    let source = [];
+    for (key in journalSubscriptions) {
+      if (!this.state.followJournals.includes(journalSubscriptions[key])) {
+        source.push(journalSubscriptions[key]);
+      }
     }
+
+    this.setState({
+      followJournals: [...this.state.followJournals, ...source]
+    });
   };
 
   getJournals = async () => {
     const { navigation } = this.props;
     this.setState({ loading: true });
 
+    // prettier-ignore
     const url = `https://newsapi.org/v2/sources?country=${navigation.state.params.country}&apiKey=${apiKey["api"]}`;
     let journalResp = await fetch(url);
     let journalData = await journalResp.json();
@@ -80,29 +83,35 @@ export default class JournalList extends PureComponent {
     });
   };
 
+  toggleSubToJournal = (name, id) => {
+    this.props.journalSubscriptions[name] ?
+      this.props.unsubscribeToJournal(name, id) :
+      this.props.subscribeToJournal(name, id)
+  };
+
   renderRow = journal => {
-    const { followJournals } = this.state;
+    const { journalSubscriptions } = this.props;
     return (
       <RowCard
-        text={journal.name}
+        text={journal.item.name}
         iconName={
-          followJournals.includes(journal.id) ? "heart" : "heart-outlined"
+          journalSubscriptions[journal.item.name] ? "heart" : "heart-outlined"
         }
-        onPress={()=>this.openModal(journal.name, journal.description)}
+        onPress={() => this.openModal(journal.item.name, journal.item.description)}
+        onPressIcon={() => this.toggleSubToJournal(journal.item.name, journal.item.id)}
       />
     );
   };
 
   renderResults = () => {
-    const {
-      journals,
-      visibleModal,
-      titleModal,
-      descModal
-    } = this.state;
+    const { journals, visibleModal, titleModal, descModal } = this.state;
     return (
       <View>
-        <ListView data={journals} renderRow={this.renderRow} />
+        <FlatList 
+          data={journals}
+          renderItem={this.renderRow}
+          keyExtractor={(item) => item.id}
+        />
         <BottomModal
           isVisible={visibleModal}
           title={titleModal}
@@ -115,6 +124,21 @@ export default class JournalList extends PureComponent {
   };
 
   render() {
+    console.log("Подписки из state", this.props.journalSubscriptions);
     return this.state.loading ? <DefaultLoader /> : this.renderResults();
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    journalSubscriptions: state.journalSubscriptions
+  };
+};
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(ActionCreators, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(JournalList);

@@ -1,6 +1,9 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import { ListView } from "@shoutem/ui";
-import firebase from "firebase";
+
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import ActionCreators from "../../../redux/actions";
 
 import DefaultLoader from "../../preloader/DefaultLoader";
 import Card from "../../cards/Card";
@@ -11,7 +14,7 @@ import "../../../redux/helpers/firebaseInitApp";
 
 console.ignoredYellowBox = ["Setting a timer"];
 
-export default class NewsList extends PureComponent {
+class NewsList extends Component {
   state = {
     news: [],
     userFollowData: "",
@@ -20,32 +23,26 @@ export default class NewsList extends PureComponent {
     date: new Date().setDate(new Date().getDate())
   };
 
-  componentDidMount = () => {
-    this.getNews();
+  componentDidMount = async () => {
+    await this.props.getJournalSubscriptions();
+    await this.getNews();
   };
 
   getNews = async () => {
     const { date, news } = this.state;
-
-    let userID = firebase.auth().currentUser.uid;
-    let database = firebase.database();
+    const { journalSubscriptions } = this.props;
     this.setState({ loading: true });
 
     this.decrementDate();
 
-    let userResponse = await database.ref("/" + userID);
-    let userFollowResponse = await userResponse.once("value");
-    let userFollowData = await userFollowResponse.val();
-
     let sources = "";
-    for (key in userFollowData) {
-      sources += userFollowData[key] + ",";
+    for (key in journalSubscriptions) {
+      sources += journalSubscriptions[key] + ",";
     }
     sources = sources.substring(0, sources.length - 1);
 
-    const newsUrl = `https://newsapi.org/v2/everything?sources=${sources}&to=${this.formatDate(
-      date
-    )}&apiKey=${apiKey["api"]}`;
+    // prettier-ignore
+    const newsUrl = `https://newsapi.org/v2/everything?sources=${sources}&to=${this.formatDate(date)}&apiKey=${apiKey["api"]}`;
     let newsResponse = await fetch(newsUrl);
     let newsData = await newsResponse.json();
 
@@ -118,3 +115,14 @@ export default class NewsList extends PureComponent {
     return this.state.firstLoad ? <DefaultLoader /> : this.renderResults();
   }
 }
+
+
+const mapStateToProps = state => {
+  return {
+    journalSubscriptions: state.journalSubscriptions,
+  };
+}
+
+const mapDispatchToProps = dispatch => bindActionCreators(ActionCreators, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewsList);

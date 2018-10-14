@@ -12,17 +12,15 @@ import { WebBrowser } from "expo";
 
 import colors from "../../constants/Colors";
 
-export default (Card = props => {
-  const {
-    url,
-    image,
-    title,
-    description,
-    metaDataLeft,
-    metaDataRight,
-    animated
-  } = props;
-
+export default (Card = ({
+  url,
+  image,
+  title,
+  description,
+  metaDataLeft,
+  metaDataRight,
+  animated
+}) => {
   this.scaleValue = new Animated.Value(animated ? 0.8 : 1);
 
   animatedNewsCard = scale => {
@@ -68,7 +66,7 @@ Card.defaultProps = {
 Card.propTypes = {
   url: PropTypes.string,
   image: PropTypes.string,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   description: PropTypes.string,
   metaDataLeft: PropTypes.string,
   metaDataRight: PropTypes.string,
